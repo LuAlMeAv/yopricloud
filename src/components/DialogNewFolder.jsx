@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField, Typography } from "@mui/material";
 import { useFilesContext } from "../contexts/FilesProvider";
 import { useBackendContext } from "../contexts/BackendProvider";
+import { enqueueSnackbar } from "notistack";
 
 export default function DialogNewFolder({ open, setOpen }) {
     const { createFolder, pathnameReplaced } = useBackendContext();
@@ -31,7 +32,7 @@ export default function DialogNewFolder({ open, setOpen }) {
         e.preventDefault();
 
         const response = await createFolder(folderName);
-        console.log(response)
+        enqueueSnackbar(response.message, { variant: response.status })
         if (response.status === "error") return;
 
         handleClose();

@@ -4,16 +4,16 @@ import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle } from "
 import { useFilesContext } from "../contexts/FilesProvider";
 
 export default function DialogMoveItem({ open, setOpen, handleMove }) {
-    const { getTreeOfDirectories, directoriesTree } = useFilesContext();
+    const { getTreeOfDirectories, directoriesTree, lastTreeSelected, setLastTreeSelected } = useFilesContext();
 
     const handleClose = () => setOpen(false);
 
     // eslint-disable-next-line
-    useEffect(() => { getTreeOfDirectories() }, [])
+    useEffect(() => { getTreeOfDirectories(); setLastTreeSelected(null) }, [])
 
     return (
         <Dialog onClose={handleClose} open={open}>
-            <DialogTitle textAlign="center" children="Move to:" />
+            <DialogTitle textAlign="center" children={`Move to: ${lastTreeSelected ? lastTreeSelected : ""}`} noWrap />
             <DialogContent>
                 <Box sx={{ minHeight: 352, minWidth: 300 }}>
                     <FolderTree data={directoriesTree} />

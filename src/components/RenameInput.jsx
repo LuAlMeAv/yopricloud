@@ -3,6 +3,7 @@ import { Check, Close } from "@mui/icons-material";
 import { Box, IconButton, TextField, Tooltip, Typography } from "@mui/material";
 import { useBackendContext } from "../contexts/BackendProvider";
 import { useFilesContext } from "../contexts/FilesProvider";
+import { enqueueSnackbar } from "notistack";
 
 export default function RenameInput({ setIsRename, item }) {
     const { pathnameReplaced, renameItem } = useBackendContext();
@@ -41,7 +42,7 @@ export default function RenameInput({ setIsRename, item }) {
         const newPath = decodeURI(pathnameReplaced + "/" + newName);
 
         const response = await renameItem(oldPath, newPath);
-        console.log(response)
+        enqueueSnackbar(response.message, { variant: response.status })
         if (response.status === "error") return;
 
         handleCancel();
@@ -53,6 +54,20 @@ export default function RenameInput({ setIsRename, item }) {
         allFiles.files.map((item) => setFilesString((prev) => [...prev, item.name.toLocaleLowerCase()]));
         allFiles.directories.map((item) => setDirectoriesString((prev) => [...prev, item.name.toLocaleLowerCase()]));
     }, [allFiles]);
+    useEffect(() => {
+        const handleKeyDown = (event) => {
+            console.log(event)
+            if (event.key === "Escape") {
+                handleCancel();
+            }
+        }
+        window.addEventListener('keydown', handleKeyDown);
+
+        return () => {
+            window.removeEventListener('keydown', handleKeyDown);
+        }
+        // eslint-disable-next-line
+    }, []);
 
 
     return (

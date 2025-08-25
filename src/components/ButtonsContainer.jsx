@@ -6,6 +6,8 @@ import { useBackendContext } from "../contexts/BackendProvider";
 import DialogNewFolder from "./DialogNewFolder";
 import DialogMoveItem from "./DialogMoveItem";
 import UploadForm from "./UploadForm";
+import DialogAlert from "./DialogAlert";
+import { enqueueSnackbar } from "notistack";
 
 export default function ButtonsContainer() {
     const { deleteMultipleFiles, pathnameReplaced, moveMultipleItems } = useBackendContext();
@@ -14,6 +16,7 @@ export default function ButtonsContainer() {
     const [newFolderDialog, setNewFolderDialog] = useState(false);
     const [uploadFormDialog, setUploadFormDialog] = useState(false);
     const [isMoving, setIsMoving] = useState(false);
+    const [dialogContent, setDialogContent] = useState({ open: false, title: "", content: "", itemName: "", buttonTitle: "", action: () => { } });
 
     const handleAddFolder = () => setNewFolderDialog(true);
     const handleAddFiles = () => setUploadFormDialog(true);
@@ -30,7 +33,7 @@ export default function ButtonsContainer() {
         const newPath = decodeURIComponent(lastTreeSelected.replace("root", ""));
 
         const response = await moveMultipleItems(oldPath, newPath, selectedFiles)
-        console.log(response);
+        enqueueSnackbar(response.message, { variant: response.status });
         if (response.status === "error") return;
 
         getFiles();
@@ -38,16 +41,23 @@ export default function ButtonsContainer() {
     }
     const handleDeleteMultiple = async () => {
         const response = await deleteMultipleFiles(selectedFiles);
-        console.log(response)
+        enqueueSnackbar(response.message, { variant: response.status })
         if (response.status === "error") return;
 
         getFiles();
         setSelectedFiles([]);
     }
+    const handleOpenDialog = () => setDialogContent({
+        open: true,
+        title: "Delete files",
+        content: `Are you sure to delete ${selectedFiles.length} files?`,
+        buttonTitle: "Delete files",
+        action: handleDeleteMultiple
+    })
 
     return (
-        <Box sx={{ display: "flex", justifyContent: "space-between", my: 1 }}>
-            <Box sx={{ display: "flex", alignItems: "center" }}>
+        <Box sx={{ display: "flex", flexFlow: "row wrap", justifyContent: "space-between", my: 2, gap: 1 }}>
+            <Box sx={{ display: "flex", alignItems: "center", ml: 1 }}>
                 {allFiles.files.length > 0 && <>
                     <IconButton onClick={handleAllCheckBox}>
                         {selectedFiles.length === 0 ?
@@ -64,20 +74,18 @@ export default function ButtonsContainer() {
                             `${selectedFiles.length} ${selectedFiles.length > 1 ? "files" : "file"} selected`
                         }
                     />
-                    {selectedFiles.length > 0 &&
+                    {selectedFiles.length > 0 && <>
                         <Tooltip title="Move all">
                             <IconButton onClick={openMoveDialog}>
                                 <DriveFileMove color="warning" />
                             </IconButton>
                         </Tooltip>
-                    }
-                    {selectedFiles.length > 0 &&
                         <Tooltip title="Delete all">
-                            <IconButton onClick={handleDeleteMultiple}>
+                            <IconButton onClick={handleOpenDialog}>
                                 <Delete color="error" />
                             </IconButton>
                         </Tooltip>
-                    }
+                    </>}
                 </>}
             </Box>
             <Box>
@@ -93,6 +101,7 @@ export default function ButtonsContainer() {
             {newFolderDialog && <DialogNewFolder open={newFolderDialog} setOpen={setNewFolderDialog} />}
             {uploadFormDialog && <UploadFormModal open={uploadFormDialog} setOpen={setUploadFormDialog} />}
             {isMoving && <DialogMoveItem open={isMoving} setOpen={setIsMoving} handleMove={handleMove} />}
+            {dialogContent.open && <DialogAlert setDialogContent={setDialogContent} dialogContent={dialogContent} />}
         </Box>
     )
 }

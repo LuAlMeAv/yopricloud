@@ -9,6 +9,7 @@ import MoreMenu from "./MoreMenu";
 import RenameInput from "./RenameInput";
 import ModalPreview from "./ModalPreview";
 import DialogMoveItem from "./DialogMoveItem";
+import { enqueueSnackbar } from "notistack";
 
 const { REACT_APP_API_HOSTNAME } = process.env;
 
@@ -53,17 +54,16 @@ export default function FolderItem({ item }) {
         setSelectedFiles((prev) => prev.includes(item.name) ? prev.filter(name => name !== item.name) : [...prev, item.name])
     }
     const handleMove = async () => {
-        if (!lastTreeSelected) return;
+        if (!lastTreeSelected) return setIsMoving(false);
 
         const newPath = decodeURIComponent(lastTreeSelected + "/" + item.name).replace("root", "");
         const oldPath = decodeURIComponent(pathnameReplaced + "/" + item.name);
 
         const response = await moveItem(oldPath, newPath);
-        console.log(response);
-        if (response.status === "error") return;
-
-        getFiles();
+        enqueueSnackbar(response.message, { variant: response.status });
         setIsMoving(false);
+        if (response.status === "error") return;
+        getFiles();
     }
 
     // eslint-disable-next-line
@@ -118,7 +118,7 @@ export default function FolderItem({ item }) {
                 </Box>
             </CardStyled>
             {openModalPreview && <ModalPreview open={openModalPreview} setOpen={setOpenModalPreview} item={item} />}
-            {isMoving && <DialogMoveItem open={isMoving} setOpen={setIsMoving} handleMove={handleMove} />}
+            {isMoving && <DialogMoveItem open={isMoving} setOpen={setIsMoving} item={item} handleMove={handleMove} />}
         </Grid>
     )
 }

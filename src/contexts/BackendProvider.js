@@ -143,7 +143,7 @@ export default function BackendProvider({ children }) {
 export const useBackendContext = () => {
     const context = useContext(BackendContext);
     if (!context) {
-        throw new Error('useBackendContext must be used within a GlobalProvider.');
+        throw new Error('useBackendContext must be used within a BackendProvider.');
     }
     return context;
 }

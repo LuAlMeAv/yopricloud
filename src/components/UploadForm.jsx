@@ -8,6 +8,7 @@ import { useFilesContext } from "../contexts/FilesProvider";
 import DragAndDropContainer from "./DragAndDropContainer";
 import DialogNewFolder from "./DialogNewFolder";
 import PreviewElement from "./PreviewElement";
+import { enqueueSnackbar } from "notistack";
 
 const DragAndDrop = styled.div`
     border: dashed;
@@ -42,7 +43,7 @@ export default function UploadForm({ closeModal }) {
         }
 
         const response = await postFiles(formData, pathnameReplaced + foldername)
-        console.log(response)
+        enqueueSnackbar(response.message, { variant: response.status })
         if (response.status === "error") return;
 
         formFile.current.reset()

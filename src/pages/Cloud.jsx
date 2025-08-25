@@ -10,7 +10,7 @@ export default function Cloud() {
     const directory = pathnameReplaced ? decodeURIComponent(pathnameReplaced).split("/").reverse()[0] : "Root";
 
     return (
-        <Container>
+        <Container sx={{minHeight: "90vh"}}>
             <Breadcrumbs />
             <Typography variant="h4" component="p" textAlign="center" my={3} children={directory} />
             <Divider />
