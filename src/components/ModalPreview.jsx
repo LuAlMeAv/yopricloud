@@ -1,7 +1,7 @@
 import { Box, Modal, Typography } from "@mui/material";
 import { useBackendContext } from "../contexts/BackendProvider";
 
-const { REACT_APP_API_HOSTNAME } = process.env;
+const { REACT_APP_FILE_HOSTNAME } = process.env;
 
 const style = {
     position: 'absolute',
@@ -34,7 +34,7 @@ export default function ModalPreview({ open, setOpen, item }) {
                     {name}
                 </Typography>
                 <embed
-                    src={`${REACT_APP_API_HOSTNAME}/file?path=${pathnameReplaced}/${name}`}
+                    src={`${REACT_APP_FILE_HOSTNAME}/file?path=${pathnameReplaced}/${name}`}
                     type={mimeType === "application/mp4" ? "video/mp4" : mimeType}
                     style={{
                         width: "99%",
