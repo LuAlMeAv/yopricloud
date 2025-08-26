@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { useBackendContext } from "./BackendProvider";
+import { enqueueSnackbar } from "notistack";
 
 const FilesContext = createContext();
 
@@ -20,6 +21,7 @@ export default function FilesProvider({ children }) {
     const getFiles = async () => {
         const response = await getAllFiles();
         console.log(response)
+        if (!response.status) return enqueueSnackbar("No connection!", { variant: "error", autoHideDuration: 10000 })
         if (response.status === "error" || !response.status) return;
 
         setAllFiles(response.files)
