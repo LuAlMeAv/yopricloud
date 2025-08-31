@@ -22,7 +22,9 @@ export default function FilesProvider({ children }) {
         const response = await getAllFiles();
         console.log(response)
         if (!response.status) return enqueueSnackbar("No connection!", { variant: "error", autoHideDuration: 10000 })
-        if (response.status === "error" || !response.status) return;
+        if (response.status !== "success") {
+            return enqueueSnackbar(response.message, { variant: response.status })
+        }
 
         setAllFiles(response.files)
     }

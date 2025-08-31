@@ -11,7 +11,7 @@ import ModalPreview from "./ModalPreview";
 import DialogMoveItem from "./DialogMoveItem";
 import { enqueueSnackbar } from "notistack";
 
-const { REACT_APP_FILE_HOSTNAME } = process.env;
+const { REACT_APP_API_HOSTNAME } = process.env;
 
 const CardStyled = styled(Card)(({ theme, isChecked }) => ({
     transition: "ease all .3s",
@@ -40,7 +40,7 @@ export default function FolderItem({ item }) {
     const isAudio = type === "file" && mimeType && mimeType.startsWith("audio/");
     const isVideo = type === "file" && mimeType && (mimeType.startsWith("video/") || mimeType === "application/mp4");
     const ext = name.split(".").reverse()[0].toUpperCase();
-    const imagePath = `${REACT_APP_FILE_HOSTNAME}/${isAudio ? "cover" : "file"}?path=${pathnameReplaced}/${name}`;
+    const imagePath = `${REACT_APP_API_HOSTNAME}/${isAudio ? "cover" : "file"}?path=${pathnameReplaced}/${name}`;
 
     const handleClick = () => {
         if (type === "directory") {
